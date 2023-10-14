@@ -1,9 +1,22 @@
+
+from tkinter import * 
+
+from tkinter.ttk import *
+
+from time import strftime
+
+
+
+
+import googletrans
+
+import requests
 import os
+import calendar
+from googletrans import Translator
 import discord
 from discord.ext import commands
 import random
-
-
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -16,19 +29,289 @@ async def on_ready():
 
 
 
-@bot.command()
-async def hello(ctx):
-    await ctx.send("Приветствую тебя")
-    await ctx.send("Что ты хотечешь узнать от меня?")
-    
-
 @bot.event
 async def on_message(message):
     if message.content.startswith('Привет ботяра'):
         channel = message.channel
         await channel.send("Привет")
         await channel.send("Что ты хочешь узнать?")
+        await channel.send("(Варианты вопросов: 1) Хочу узнать как очистить воздух в доме)")
+        await channel.send(" 2) Хочу узнать как сортировать мусор")
+
 
     if message.content.startswith('Хочу узнать как очистить воздух в доме'):
         channel = message.channel
-        await channel.send("В ванной и туалете дополнительно поставьте вытяжной вентилятор")
+        await channel.send("В ванной и туалете дополнительно поставь вытяжной вентилятор")
+
+    if message.content.startswith("Хочу узнать как сортировать мусор"):
+        channel = message.channel
+        await channel.send("1) Удаление камней, острых и значительных по объему предметов, способных повредить конвейер или иное оборудование.")
+        await channel.send("2)Отделение крупного сора от более мелкого.")
+        await channel.send("3) Отделение стекла, бумаги, пластика и т. д.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@bot.command()
+async def smile(ctx):
+    vabor = random.randint(1,5)
+    if vabor == 1:
+        await ctx.send("&#128512;")
+    
+    if vabor == 2:
+        await ctx.send("&#128516;")
+    
+    if vabor == 3:
+        await ctx.send("&#128513;")
+    
+    if vabor == 4:
+        await ctx.send("&#128519;")
+    
+    if vabor == 5:
+        await ctx.send("&#128535;")
+
+
+@bot.command()
+async def monetka(ctx):
+    flip = random.randint(1, 2)
+    if flip == 1:
+        await ctx.send("ОРЕЛ")
+    if flip == 2:
+        await ctx.send("РЕШКА")
+        
+
+
+@bot.command()
+async def password(ctx, pass_length: int):
+    elements = "+-/*!&$#?=@<>"
+    password = ""
+
+    for i in range(pass_length):
+        password += random.choice(elements)
+
+    await ctx.send(password)
+    
+
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f'Привет! Я бот {bot.user}!')
+
+
+@bot.command()
+async def by(ctx):
+    await ctx.send(f"Пока! {ctx.author}")
+
+
+
+@bot.command()
+async def add(ctx, left: int, right: int):
+    #"""складывает два числа."""
+    await ctx.send(left + right)
+
+
+
+@bot.command()
+async def info(ctx):
+    await ctx.send("Это первый бот автора (Константина)")
+    await ctx.send("Бот был создан 17 сентября 2023г")
+    await ctx.send("Версия бота 1.1")
+    await ctx.send("бот каждый день будет улучшать и когда нибудь придёт к тому что будет уметь всё))")
+
+
+
+@bot.command()
+async def roll(ctx, dice: str):
+    #"""Rolls a dice in NdN format."""
+    try:
+        rolls, limit = map(int, dice.split('d'))
+    except Exception:
+        await ctx.send('Format has to be in NdN!')
+        return
+
+    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
+    await ctx.send(result)
+
+
+
+
+
+
+@bot.command()
+async def helps(ctx):
+    await ctx.send("smile - (Выводит рандомный смайлик)")
+    await ctx.send("monetka - (Подбрасывает монетку)")
+    await ctx.send("password - (Генерирует рандомный пороль)")
+    await ctx.send("hello - (Бот поздаровается с вами)")
+    await ctx.send("by - (Бот попрощается с вами)")
+    await ctx.send("info - (Выводим всю информацию о бота)")
+    await ctx.send("roll - (Вы задаёте параметр NdN и под бобрасывает кубик(кубики)) ")
+    await ctx.send("number - (Выведитт календарь сейчасшний год и месяц)")
+    await ctx.send("quote = (Расскажет вам цитату)")
+    await ctx.send("mems = (Пришлют вам случайный мем)")
+    await ctx.send("dog = (Пришлёт вам случайную фотку собаки)")
+
+
+
+
+
+
+
+@bot.command()
+async def perevod(ctx, lang, *, args):
+    t = Translator()
+    a = t.translate(args, dest=lang)
+    await ctx.send(a.text)  
+
+
+
+@bot.command()
+async def number(ctx):
+    year = 2023
+    month = 9 
+    await ctx.send(calendar.month(year,month))
+
+
+
+@bot.command()
+async def time(ctx):
+    root = Tk()
+    root.title("clock")
+
+    string = strftime("%H:%M:%S %p")
+    label.config(text=string)
+    label.after(1000,time)
+
+    label = Label(root, font=("ds-digital",80),background="black",foreground="cyan")
+    label.pack(anchor="center")
+    await ctx.send("time()")
+    await ctx.send("mainloop()")
+
+
+
+
+@bot.command()
+async def quote(ctx):
+    vab = random.randint(1,5)
+    if vab == 1:
+        await ctx.send("Живи как хочешь, раз нельзя как хочется...")
+
+
+    if vab == 2:
+        await ctx.send("Никогда не откладвай на завтра, то что можешь сделать послезавтра")
+
+    
+    if vab == 3:
+        await ctx.send("Каждый человек имеет право на собственное мнение — при условии, что оно совпадает с нашим")
+
+
+    if vab == 4:
+        await ctx.send("Добрым словом и револьвером вы сможете добиться большего, чем одним лишь добрым словом")
+
+
+    if vab == 5:
+        await ctx.send("Сходят с ума только те, у кого он есть")
+
+
+
+
+@bot.command()
+async def mems(ctx):
+    mems = (os.listdir('images'))
+    img = random.choice(mems)
+    with open(f'images/{img}', 'rb') as f:
+        picture = discord.File(f)
+    await ctx.send(file=picture)
+
+
+
+def image_fox():
+    url =  "https://random.dog/woof.json"
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
+
+@bot.command('dog')
+async def dog(ctx):
+    image_url = image_fox()
+    await ctx.send(image_url)
+    
+
+
+    
+
+
+@bot.command()
+async def animals(ctx):
+    vab = random.randint(1,100)
+
+    if vab > 0 < 40:
+        with open("animals/cat1.jpeg", "rb") as f:
+            picture = discord.File(f)
+        await ctx.send(file=picture)
+
+
+    if vab > 41 < 60:
+        with open("animals/cat2.jpeg", "rb") as f:
+            picture = discord.File(f)
+        await ctx.send(file=picture)
+    
+
+
+    if vab > 61 < 80:
+        with open("animals/cat3.jpg", "rb") as f:
+            picture = discord.File(f)
+        await ctx.send(file=picture)
+
+
+    if vab > 81 < 90:
+        with open("animals/dog1.jpg", "rb") as f:
+            picture = discord.File(f)
+        await ctx.send(file=picture)
+        
+
+    if vab > 91 < 100:
+        with open("animals/enot.jpg", "rb") as f:
+            picture = discord.File(f)
+        await ctx.send(file=picture)
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    
+bot.run("MTE1MzMyMDkxNzgwODcxNzg4NQ.G7F76P.Ug7hpUB_PjfsaYI1GO2MaWQSwI-VeG-XGHbHTw")
